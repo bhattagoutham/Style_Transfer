@@ -156,9 +156,11 @@ for i in range(5):
     print()
 
 
+style_path = '2.jpg'
+content_path = 'jes.jpeg'
 
-style = cv2.imread('2.jpg')
-content = cv2.imread('21.jpg')
+style = cv2.imread(style_path)
+content = cv2.imread(content_path)
 
 # disp_img(content, "content")
 # disp_img(style, "style")
@@ -181,8 +183,8 @@ relu = 5
 
 for i in range(iters):
 
-    i = relu-1
-    print("\nLevel ",i," : \n-----------\n")
+    i = relu-i-1
+    print("\nLevel ",i+1," : \n-----------")
     
     r,c,p = content.shape
     content = content.reshape(1,r,c,p)
@@ -210,12 +212,12 @@ for i in range(iters):
     s,r,c,p = out.shape
     content = out.reshape(r,c,p)
 
-    # disp_img(np.uint8(content), "Level_"+str(i))
+    disp_img(np.uint8(content), "Level_"+str(i))
     print("reconstructed_content_shape: ", content.shape)
 
 
 
 # disp_img(np.uint8(content), "result")
-out_file = "relu_"+str(relu)+"_alpha_"+str(alpha)+"_iters_"+str(iters)+".png"
+out_file = content_path[:content_path.find('.')]+"_"+style_path[:style_path.find('.')]+"_"+"relu_"+str(relu)+"_alpha_"+str(alpha)+"_iters_"+str(iters)+".png"
 cv2.imwrite(out_file, np.uint8(content))
 
