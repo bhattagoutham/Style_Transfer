@@ -13,12 +13,10 @@ parser.add_argument('--style-path', type=str, dest='style_path', help='Style ima
 parser.add_argument('--alpha', type=float, help="Alpha blend value", default=0.9)
 parser.add_argument('--out-path', type=str, dest='out_path', help='Output folder path')
 parser.add_argument('--live-path', type=str, dest='live_path', help='live folder path')
+parser.add_argument('--weight-path', type=str, dest='weight_path', help='weights path')
 args = parser.parse_args()
 
-def disp_img(img, name, live):
-    if live == 1:
-        cv2.imshow(name,img)
-    else:
+def disp_img(img, name):
         cv2.imshow(name,img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
@@ -87,7 +85,6 @@ def wct_np(content, style, alpha=0.6, eps=1e-5):
 def vgg_from_t7(t7_file, net_type, layer, target_layer=None):
 
     '''Extract VGG layers from a Torch .t7 model into a Keras model
-       e.g. vgg = vgg_from_t7('vgg_normalised.t7', target_layer='relu4_1')
        Adapted from https://github.com/jonrei/tf-AdaIN/blob/master/AdaIN.py
        Converted caffe->t7 from https://github.com/xunhuang1995/AdaIN-style
     '''
@@ -151,17 +148,17 @@ def vgg_from_t7(t7_file, net_type, layer, target_layer=None):
 
         # print()
 
-    # Hook it up
+    
     model = Model(inputs=inp, outputs=x)
     # print("\n-------------------------------------------------------------------------\n")
     return model
 
 
-def stylize(content_path, style_path, out_path, alpha, live_path):
+def stylize(content_path, style_path, out_path, alpha, live_path, weight_path):
 
     # path to vgg_normalised_conv#_#.t7 and  feature_invertor_conv#_#.t7 files
-    encoder_path = "/home/goutham/WCT-TF-master/models2/models"
-    decoder_path = "/home/goutham/WCT-TF-master/models2/models"
+    encoder_path = weight_path
+    decoder_path = weight_path
     encoder = []
     decoder = []
 
@@ -227,16 +224,16 @@ def stylize(content_path, style_path, out_path, alpha, live_path):
         out = decoder[i].predict(blended)
         s,r,c,p = out.shape
         content = out.reshape(r,c,p)
-        
-        if live_path == 1:
-            disp_img(np.uint8(content), "frame", 1)
+
+        if live_path == '1':
+            disp_img(np.uint8(content), "frame")
         else:    
-            disp_img(np.uint8(content), "Level_"+str(i), 0)
+            disp_img(np.uint8(content), "Level_"+str(i))
         
         print("reconstructed_content_shape: ", content.shape)
 
 
-    if live_path == 0:
+    if live_path == '0':
         out_file = content_path[content_path.rfind('/'):content_path.find('.')]+"_"+style_path[style_path.rfind('/')+1:style_path.find('.')]+".png"
         # disp_img(np.uint8(content), "result")
         # out_file = content_path[:content_path.find('.')]+"_"+style_path[:style_path.find('.')]+"_"+"relu_"+str(relu)+"_alpha_"+str(alpha)+"_iters_"+str(iters)+".png"
@@ -245,4 +242,4 @@ def stylize(content_path, style_path, out_path, alpha, live_path):
 
 
 
-stylize(args.content_path, args.style_path, args.out_path, args.alpha, args.live_path)
+stylize(args.content_path, args.style_path, args.out_path, args.alpha, args.live_path, args.weight_path)
