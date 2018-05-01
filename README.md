@@ -6,7 +6,8 @@ Download weights from the given link and place it in a folder.
 https://drive.google.com/file/d/0B8_MZ8a8aoSeWm9HSTdXNE9Eejg/view
 
 
-To execute the files
+To execute the program
+-----------------------
 
 Example commands
 ----------------
