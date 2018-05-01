@@ -2,7 +2,7 @@
 This projects tries to implement style transfer.
 https://arxiv.org/pdf/1705.08086.pdf
 
-Download weights from the below link and place it in a folder.
+Download weights from the given link and place it in a folder.
 https://drive.google.com/file/d/0B8_MZ8a8aoSeWm9HSTdXNE9Eejg/view
 
 
