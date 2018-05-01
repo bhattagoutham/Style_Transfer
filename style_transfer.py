@@ -12,12 +12,16 @@ parser.add_argument('--content-path', type=str, dest='content_path', help='Conte
 parser.add_argument('--style-path', type=str, dest='style_path', help='Style image or folder of images')
 parser.add_argument('--alpha', type=float, help="Alpha blend value", default=0.9)
 parser.add_argument('--out-path', type=str, dest='out_path', help='Output folder path')
+parser.add_argument('--live-path', type=str, dest='live_path', help='live folder path')
 args = parser.parse_args()
 
-def disp_img(img, name):
-    cv2.imshow(name,img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+def disp_img(img, name, live):
+    if live == 1:
+        cv2.imshow(name,img)
+    else:
+        cv2.imshow(name,img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
 def pad_reflect(x, padding=1):
     return tf.pad(
@@ -153,7 +157,7 @@ def vgg_from_t7(t7_file, net_type, layer, target_layer=None):
     return model
 
 
-def stylize(content_path, style_path, out_path, alpha):
+def stylize(content_path, style_path, out_path, alpha, live_path):
 
     # path to vgg_normalised_conv#_#.t7 and  feature_invertor_conv#_#.t7 files
     encoder_path = "/home/goutham/WCT-TF-master/models2/models"
@@ -223,18 +227,22 @@ def stylize(content_path, style_path, out_path, alpha):
         out = decoder[i].predict(blended)
         s,r,c,p = out.shape
         content = out.reshape(r,c,p)
-
-        disp_img(np.uint8(content), "Level_"+str(i))
+        
+        if live_path == 1:
+            disp_img(np.uint8(content), "frame", 1)
+        else:    
+            disp_img(np.uint8(content), "Level_"+str(i), 0)
+        
         print("reconstructed_content_shape: ", content.shape)
 
 
-    
-    out_file = content_path[content_path.rfind('/'):content_path.find('.')]+"_"+style_path[style_path.rfind('/')+1:style_path.find('.')]+".png"
-    # disp_img(np.uint8(content), "result")
-    # out_file = content_path[:content_path.find('.')]+"_"+style_path[:style_path.find('.')]+"_"+"relu_"+str(relu)+"_alpha_"+str(alpha)+"_iters_"+str(iters)+".png"
-    
-    cv2.imwrite(out_path+"/"+out_file, np.uint8(content))
+    if live_path == 0:
+        out_file = content_path[content_path.rfind('/'):content_path.find('.')]+"_"+style_path[style_path.rfind('/')+1:style_path.find('.')]+".png"
+        # disp_img(np.uint8(content), "result")
+        # out_file = content_path[:content_path.find('.')]+"_"+style_path[:style_path.find('.')]+"_"+"relu_"+str(relu)+"_alpha_"+str(alpha)+"_iters_"+str(iters)+".png"
+        
+        cv2.imwrite(out_path+"/"+out_file, np.uint8(content))
 
 
 
-stylize(args.content_path, args.style_path, args.out_path, args.alpha)
+stylize(args.content_path, args.style_path, args.out_path, args.alpha, args.live_path)
