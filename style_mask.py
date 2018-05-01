@@ -26,18 +26,17 @@ def kmeans(file_path, K):
 	res2 = res.reshape((img.shape))
 	r, c, p = img.shape
 	# seg = np.zeros((r, c, p, K))
-	seg = img
+	
 	# disp_img(res2)
 	# print(img.shape)
 	# print(res.shape)
 	for i in range(center.shape[0]):
+		print('mask_', i)
 		mask = res2 == center[i]
 		masked = np.multiply(mask, img)
 		cv2.imwrite('/home/goutham/WCT-TF-master/samples/masked_'+str(i+1)+'.png', masked)
-		os.system('python stylize.py \
-			--checkpoints models/relu5_1 models/relu4_1 models/relu3_1 models/relu2_1 models/relu1_1 \
-			--relu-targets relu5_1 relu4_1 relu3_1 relu2_1 relu1_1 \
-			--style-size 512 --alpha 0.5 \
+		os.system('python style_transfer.py \
+			--alpha 0.9 \
 			--style-path /home/goutham/WCT-TF-master/samples/style_'+str(i+1)+'.png \
 			--content-path /home/goutham/WCT-TF-master/samples/masked_'+str(i+1)+'.png \
 			--out-path /home/goutham/test')
@@ -48,7 +47,12 @@ def kmeans(file_path, K):
 		style = style[0:row, 0:col, :]
 		
 		mask_style = np.multiply(style, mask)
-		seg = cv2.add(seg, mask_style)
+		
+		if i == 0:
+			seg = mask_style
+		else:
+			seg = cv2.add(seg, mask_style)
+		
 		disp_img(seg)
 
 	cv2.imwrite('/home/goutham/test/result.png', seg)
