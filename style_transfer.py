@@ -181,7 +181,7 @@ def stylize(content_path, style_path, out_path, alpha, live_path, weight_path):
     # tried this, but no big difference
     # style = cv2.cvtColor(style, cv2.COLOR_BGR2HSV)
     # content = cv2.cvtColor(content, cv2.COLOR_BGR2HSV)
-
+    
     print("content size: ", content.shape)
     print("style size: ", style.shape)
 
