@@ -1,6 +1,5 @@
 # Style_Transfer
-This projects tries to implement style transfer.
-https://arxiv.org/pdf/1705.08086.pdf
+Implementation of image style transfer from https://arxiv.org/pdf/1705.08086.pdf
 
 Download weights from the given link and place it in a folder.
 https://drive.google.com/file/d/0B8_MZ8a8aoSeWm9HSTdXNE9Eejg/view
